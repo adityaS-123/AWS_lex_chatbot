@@ -29,7 +29,7 @@
             background-color: rgba(255, 255, 255, 0.9);
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Increased shadow visibility */
             max-width: 700px;
             width: 100%;
             box-sizing: border-box;
@@ -81,7 +81,7 @@
             text-align: center;
             opacity: 0;
             animation: shake 0.5s ease-in-out forwards;
-            color: #fff; /* Text color for better visibility on the background */
+            color: #fff;
         }
 
         #loader {
@@ -196,13 +196,14 @@
 
     <script>
         function validateForm() {
-         
+            // ... (existing validation logic) ...
 
             submitBooking();
             return false;
         }
 
         function submitBooking() {
+            // ... (existing booking logic) ...
 
             setTimeout(() => {
                 loader.style.display = "none";
@@ -232,8 +233,8 @@
 
                     // Clear the form after a delay
                     setTimeout(() => {
-                        resultDiv.innerHTML = "";
                         bookingDetails.innerHTML = "";
+                        bookingComplete.innerHTML = "";
                     }, 5000);
                 }, 500);
             }, 3000);
@@ -248,15 +249,19 @@
             document.getElementById("checkOutDate").value = "";
             document.getElementById("numberOfGuests").value = "";
 
-            // Clear booking details
-            document.getElementById("bookingDetails").innerHTML = "";
-
             // Show the form again
             document.getElementById("bookingForm").style.display = "flex";
             document.getElementById("bookingForm").classList.remove("fadeOut");
+
+            // Clear booking details
+            document.getElementById("bookingDetails").innerHTML = "";
+
+            // Clear booking complete message
+            document.getElementById("bookingComplete").innerHTML = "";
         }
     </script>
 
+    <!-- Your existing Kommunicate script remains unchanged -->
     <script type="text/javascript">
         (function(d, m){
             var kommunicateSettings = 
