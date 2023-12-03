@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Booking Bot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #ffb6c1, #833ab4);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #ffffffb5;
+            transition: background 0.5s;
+        }
+
+        h2 {
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        form, #bookingComplete, #bookingDetails {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            width: 100%;
+            box-sizing: border-box;
+            color: #333;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-in-out forwards;
+            transition: background 0.5s;
+        }
+
+        form.fadeOut {
+            animation: fadeOut 1s ease-in-out forwards;
+        }
+
+        label, input {
+            display: block;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #4CAF50;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #bookingResult, #bookingDetails {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+            opacity: 0;
+            animation: shake 0.5s ease-in-out forwards;
+            color: #fff; /* Text color for better visibility on the background */
+        }
+
+        #loader {
+            display: none;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+
+        #clearFormBtn {
+            background-color: #e74c3c;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        #clearFormBtn:hover {
+            background-color: #c0392b;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25%, 75% {
+                transform: translateX(-5px);
+            }
+            50% {
+                transform: translateX(5px);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Hotel Booking Bot</h2>
+    
+    <form id="bookingForm" onsubmit="return validateForm()">
+        <label for="name" title="Enter your full name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="phone" title="Enter your phone number">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required>
+
+        <label for="email" title="Enter your email address">Email ID:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="checkInDate" title="Select your check-in date">Check-in Date:</label>
+        <input type="date" id="checkInDate" name="checkInDate" required>
+
+        <label for="checkOutDate" title="Select your check-out date">Check-out Date:</label>
+        <input type="date" id="checkOutDate" name="checkOutDate" required>
+
+        <label for="numberOfGuests" title="Enter the number of guests">Number of Guests:</label>
+        <input type="number" id="numberOfGuests" name="numberOfGuests" min="1" required>
+
+        <button type="submit">
+            <span id="loader"></span> Submit Booking
+        </button>
+    </form>
+
+    <div id="bookingComplete"></div>
+    <div id="bookingDetails"></div>
+    <button id="clearFormBtn" onclick="clearForm()">Clear Form</button>
+
+    <script>
+        function validateForm() {
+         
+
+            submitBooking();
+            return false;
+        }
+
+        function submitBooking() {
+
+            setTimeout(() => {
+                loader.style.display = "none";
+                form.classList.add("fadeOut");
+
+                setTimeout(() => {
+                    form.style.display = "none";
+                    bookingComplete.innerHTML = "The booking is complete";
+                    bookingComplete.style.fontSize = "24px";
+                    bookingComplete.style.textAlign = "center";
+                    bookingComplete.style.marginTop = "20px";
+                    bookingComplete.style.opacity = 1;
+                    bookingComplete.style.animation = "pulse 1s infinite";
+
+                    // Display booking details
+                    const bookingDetails = document.getElementById("bookingDetails");
+                    bookingDetails.innerHTML = `
+                        Booking Details:
+                        <br>Name: ${name}
+                        <br>Phone: ${phone}
+                        <br>Email: ${email}
+                        <br>Check-in Date: ${checkInDate}
+                        <br>Check-out Date: ${checkOutDate}
+                        <br>Number of Guests: ${numberOfGuests}
+                    `;
+                    bookingDetails.style.opacity = 1;
+
+                    // Clear the form after a delay
+                    setTimeout(() => {
+                        resultDiv.innerHTML = "";
+                        bookingDetails.innerHTML = "";
+                    }, 5000);
+                }, 500);
+            }, 3000);
+        }
+
+        function clearForm() {
+            // Clear all form fields
+            document.getElementById("name").value = "";
+            document.getElementById("phone").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("checkInDate").value = "";
+            document.getElementById("checkOutDate").value = "";
+            document.getElementById("numberOfGuests").value = "";
+
+            // Clear booking details
+            document.getElementById("bookingDetails").innerHTML = "";
+
+            // Show the form again
+            document.getElementById("bookingForm").style.display = "flex";
+            document.getElementById("bookingForm").classList.remove("fadeOut");
+        }
+    </script>
+
+    <script type="text/javascript">
+        (function(d, m){
+            var kommunicateSettings = 
+                {"appId":"62da09c4d0488f3b4f6aa8c341698f2d","popupWidget":true,"automaticChatOpenOnNavigation":true};
+            var s = document.createElement("script"); s.type = "text/javascript"; s.async = true;
+            s.src = "https://widget.kommunicate.io/v2/kommunicate.app";
+            var h = document.getElementsByTagName("head")[0]; h.appendChild(s);
+            window.kommunicate = m; m._globals = kommunicateSettings;
+        })(document, window.kommunicate || {});
+    </script>
+</body>
+</html>
